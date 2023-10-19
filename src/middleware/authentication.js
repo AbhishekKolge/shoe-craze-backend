@@ -30,7 +30,7 @@ const authorizePermissionsMiddleware = (...roles) => {
 };
 
 const attachUserIfExists = async (req, res, next) => {
-  const token = req.signedCookies.token;
+  const token = req.signedCookies[req.header('Origin')];
 
   if (!token) {
     return next();
