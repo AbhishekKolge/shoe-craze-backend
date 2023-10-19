@@ -21,6 +21,7 @@ const attachCookiesToResponse = ({ res, req, tokenUser }) => {
     secure: process.env.NODE_ENV !== 'development',
     signed: true,
     domain: req.header('Origin'),
+    sameSite: 'none',
   });
 };
 

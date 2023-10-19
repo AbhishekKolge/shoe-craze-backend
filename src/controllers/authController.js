@@ -242,6 +242,8 @@ const logout = (req, res) => {
   res.cookie('token', 'logout', {
     httpOnly: true,
     maxAge: 0,
+    domain: req.header('Origin'),
+    sameSite: 'none',
   });
 
   res.status(StatusCodes.OK).json({
