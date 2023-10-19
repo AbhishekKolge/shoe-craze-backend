@@ -128,7 +128,7 @@ const createOrder = async (req, res) => {
       subTotal,
       total,
       discount,
-      couponId: coupon,
+      couponId: coupon || null,
       products: {
         connect: user.cart.map((product) => ({ id: product.id })),
       },
