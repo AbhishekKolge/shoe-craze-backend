@@ -2,7 +2,7 @@ const CustomError = require('../errors');
 const customUtils = require('../utils');
 
 const authenticateUserMiddleware = async (req, res, next) => {
-  const token = req.signedCookies.token;
+  const token = req.signedCookies[req.header('Origin')];
 
   if (!token) {
     throw new CustomError.UnauthenticatedError('Authentication invalid');
