@@ -12,7 +12,7 @@ const createJWT = ({
 
 const isTokenValid = (token) => jwt.verify(token, process.env.JWT_SECRET);
 
-const attachCookiesToResponse = ({ res, tokenUser }) => {
+const attachCookiesToResponse = ({ res, req, tokenUser }) => {
   const token = createJWT({ payload: tokenUser });
 
   res.cookie('token', token, {
@@ -20,6 +20,7 @@ const attachCookiesToResponse = ({ res, tokenUser }) => {
     maxAge: process.env.TOKEN_EXPIRATION_TIME,
     secure: process.env.NODE_ENV !== 'development',
     signed: true,
+    domain: req.header('Origin'),
   });
 };
 

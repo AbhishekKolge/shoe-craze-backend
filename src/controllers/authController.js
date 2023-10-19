@@ -200,7 +200,7 @@ const login = async (req, res) => {
 
   const tokenUser = customUtils.createTokenUser(user);
 
-  customUtils.attachCookiesToResponse({ res, tokenUser });
+  customUtils.attachCookiesToResponse({ res, req, tokenUser });
 
   res.status(StatusCodes.OK).json({
     userId: user.id,
@@ -231,7 +231,7 @@ const adminLogin = async (req, res) => {
 
   const tokenUser = customUtils.createTokenUser(user);
 
-  customUtils.attachCookiesToResponse({ res, tokenUser });
+  customUtils.attachCookiesToResponse({ res, req, tokenUser });
 
   res.status(StatusCodes.OK).json({
     userId: user.id,
