@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      String    @id @default(uuid())
+  firstName               String
+  lastName                String?
+  contactNo               String    @unique
+  email                   String    @unique
+  password                String
+  role                    Role      @default(BASIC)
+  status                  Status    @default(ACTIVE)
+  gender                  Gender?
+  dob                     DateTime?
+  addresses               Address[]
+  profileImage            String?
+  profileImageId          String?
+  verificationToken       String?
+  isVerified              Boolean   @default(false)
+  verified                DateTime?
+  authorized              Boolean   @default(false)
+  passwordToken           String?
+  passwordTokenExpiration DateTime?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  wishList                Product[] @relation("Wishlist")
+  cart                    Product[] @relation("Cart")
+  productReviews          Review[]
+  orders                  Order[]
+
+  @@index([email, contactNo])
+}
+
+model Address {
+  id        String      @id @default(uuid())
+  address   String
+  city      String
+  pincode   Int
+  state     String
+  country   String      @default("India")
+  type      AddressType @default(HOME)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  orders    Order[]
+}
+
+model Product {
+  id             String       @id @default(uuid())
+  name           String       @unique
+  price          Float
+  discount       DiscountType @default(PERCENTAGE)
+  discountAmount Float?
+  image          String
+  imageId        String
+  sizes          Size[]
+  category       Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  categoryId     String
+  featured       Boolean      @default(false)
+  color          String
+  description    String       @db.VarChar(500)
+  inventory      Int          @default(0)
+  averageRating  Float        @default(0)
+  numOfReviews   Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  wishListedBy   User[]       @relation("Wishlist")
+  cartBy         User[]       @relation("Cart")
+  userReviews    Review[]
+  orders         Order[]
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId])
+}
+
+model Size {
+  id        String    @id @default(uuid())
+  value     Int       @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Coupon {
+  id               String       @id @default(uuid())
+  type             DiscountType @default(PERCENTAGE)
+  amount           Float
+  code             String       @unique
+  startTime        DateTime     @default(now())
+  expiryTime       DateTime
+  valid            Boolean      @default(true)
+  maxRedemptions   Int
+  totalRedemptions Int          @default(0)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  orders           Order[]
+}
+
+model ReturnReason {
+  id        String   @id @default(uuid())
+  title     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id          String    @id @default(uuid())
+  orderId     String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId      String
+  products    Product[]
+  address     Address   @relation(fields: [addressId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  addressId   String
+  subTotal    Float
+  total       Float
+  discount    Float
+  coupon      Coupon?   @relation(fields: [couponId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  couponId    String?
+  isPaid      Boolean   @default(false)
+  isDelivered Boolean   @default(false)
+  paidAt      DateTime?
+  deliverAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum Role {
+  BASIC
+  ADMIN
+}
+
+enum Status {
+  ACTIVE
+  LOCKED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum AddressType {
+  HOME
+  OFFICE
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
