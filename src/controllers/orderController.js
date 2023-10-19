@@ -174,14 +174,16 @@ const verifyOrder = async (req, res) => {
     },
   });
 
-  await prisma.coupon.update({
-    data: {
-      totalRedemptions: { increment: 1 },
-    },
-    where: {
-      id: couponId,
-    },
-  });
+  if (couponId) {
+    await prisma.coupon.update({
+      data: {
+        totalRedemptions: { increment: 1 },
+      },
+      where: {
+        id: couponId,
+      },
+    });
+  }
 
   await prisma.product.updateMany({
     data: {
