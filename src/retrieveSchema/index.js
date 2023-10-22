@@ -215,6 +215,11 @@ const order = {
   subTotal: true,
   total: true,
   discount: true,
+  coupon: {
+    select: {
+      code: true,
+    },
+  },
   isPaid: true,
   isDelivered: true,
 };
