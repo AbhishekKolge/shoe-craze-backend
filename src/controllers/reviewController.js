@@ -65,7 +65,7 @@ const createReview = async (req, res) => {
 
   await prisma.product.update({
     data: {
-      averageRating: _avg.rating,
+      averageRating: _avg.rating.toFixed(2),
       numOfReviews,
     },
     where: {
@@ -148,7 +148,7 @@ const updateReview = async (req, res) => {
 
   await prisma.product.update({
     data: {
-      averageRating: _avg.rating,
+      averageRating: _avg.rating.toFixed(2),
     },
     where: {
       id: review.productId,
@@ -198,7 +198,7 @@ const deleteReview = async (req, res) => {
 
   await prisma.product.update({
     data: {
-      averageRating: _avg.rating || 0,
+      averageRating: _avg.rating.toFixed(2) || 0,
       numOfReviews,
     },
     where: {
