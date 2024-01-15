@@ -151,6 +151,9 @@ const deleteUser = async (req, res) => {
   res.cookie(req.header('Origin'), 'logout', {
     httpOnly: true,
     maxAge: 0,
+    secure: true,
+    signed: true,
+    sameSite: 'none',
   });
 
   res.status(StatusCodes.OK).json({
